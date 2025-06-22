@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: ChildhoodReverie
+
+ollama:
+  host: 192.168.5.160
+  port: 11434
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: org.zyz.childhoodreverie.entity
+  configuration:
+    map-underscore-to-camel-case: true
