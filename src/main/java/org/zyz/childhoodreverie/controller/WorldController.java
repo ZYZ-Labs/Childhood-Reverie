@@ -26,6 +26,20 @@ public class WorldController {
         );
     }
 
+    /**
+     * 获取世界历 (自定义时间)
+     */
+    @GetMapping("/calendar")
+    public Map<String, String> getWorldCalendar() {
+        String calendar = worldTimeService.getWorldCalendar();
+        double multiplier = worldTimeService.getMultiplier();
+        return Map.of(
+                "calendar", calendar,
+                "multiplier", String.valueOf(multiplier)
+        );
+    }
+
+
     @PostMapping("/speed")
     public void setSpeed(@RequestParam double multiplier) {
         worldTimeService.setMultiplier(multiplier);

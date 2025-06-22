@@ -63,6 +63,25 @@ public class WorldTimeService {
         worldStateMapper.updateById(realEntity);
     }
 
+    /**
+     * 获取世界历字符串, 格式: 年-月-日 时:分:秒 (自定义历法: 12个月, 每月30天)
+     */
+    public String getWorldCalendar() {
+        long ms = getWorldTime();
+        long totalSeconds = ms / 1000;
+        long daysTotal = totalSeconds / 86400;
+        long year = daysTotal / 360 + 1;
+        long dayOfYear = daysTotal % 360;
+        long month = dayOfYear / 30 + 1;
+        long day = dayOfYear % 30 + 1;
+        long secsOfDay = totalSeconds % 86400;
+        long hour = secsOfDay / 3600;
+        long minute = (secsOfDay % 3600) / 60;
+        long second = secsOfDay % 60;
+        return String.format("世界历 %d年%d月%d日 %02d:%02d:%02d",
+                year, month, day, hour, minute, second);
+    }
+
     public long getWorldTime() {
         return Long.parseLong(worldStateMapper.selectById(KEY_WORLD_TIME).getValue());
     }
