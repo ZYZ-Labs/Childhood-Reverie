@@ -43,7 +43,7 @@ public class OllamaAgentService {
         messages.add(Map.of("role", "user", "content", buildUserContent(playerState)));
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put("model", "dream-ai14b");
+        payload.put("model", "deepseek-r1:14b");
         payload.put("messages", messages);
         payload.put("stream", false);
 

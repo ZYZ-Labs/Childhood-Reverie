@@ -7,7 +7,7 @@ spring:
     name: ChildhoodReverie
 
 ollama:
-  host: 192.168.5.160
+  host: 192.168.5.116
   port: 11434
 
 mybatis-plus:
