@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zyz.childhoodreverie.entity.PlayerEntity;
 import org.zyz.childhoodreverie.service.StorageService;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -24,6 +25,8 @@ public class PlayerController {
         p.setName(req.get("name"));
         p.setLevel(1);
         p.setLocation("home_village");
+        p.setCreatedAt(LocalDateTime.now());
+        p.setLastActive(LocalDateTime.now());
         storageService.savePlayer(p);
         return p;
     }
