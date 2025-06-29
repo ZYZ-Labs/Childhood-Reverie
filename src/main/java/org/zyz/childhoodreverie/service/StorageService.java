@@ -60,6 +60,10 @@ public class StorageService {
         return npcMapper.selectById(npcId);
     }
 
+    public void updateNpc(NpcEntity npc) {
+        npcMapper.updateById(npc);
+    }
+
     // Item definitions
     public void saveItem(ItemEntity item) {
         itemMapper.insert(item);
@@ -86,6 +90,22 @@ public class StorageService {
                         .eq("player_id", items.get(0).getPlayerId())
         );
         items.forEach(inventoryMapper::insert);
+    }
+
+    public void addInventoryItem(InventoryEntity item) {
+        inventoryMapper.insert(item);
+    }
+
+    public InventoryEntity getInventoryItem(Long id) {
+        return inventoryMapper.selectById(id);
+    }
+
+    public void updateInventoryItem(InventoryEntity item) {
+        inventoryMapper.updateById(item);
+    }
+
+    public void deleteInventoryItem(Long id) {
+        inventoryMapper.deleteById(id);
     }
 
     // 世界状态操作
