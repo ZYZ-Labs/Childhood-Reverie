@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Ollama 本地 REST API 封装，提供事件生成方法
@@ -54,22 +56,48 @@ public class OllamaAgentService {
         ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         String body = resp.getBody();
 
-        // 解析返回内容
         Map<String, Object> result = new HashMap<>();
         try {
             JsonNode root = objectMapper.readTree(body);
             String content = root.path("message").path("content").asText();
-            // 简单拆分：标题|描述|选项
-            String[] parts = content.split("\\n", 2);
-            result.put("eventTitle", parts[0].trim());
-            String descAndOptions = parts.length > 1 ? parts[1].trim() : "";
-            result.put("eventDescription", descAndOptions);
-            // 这里可根据格式进一步拆分 options，后续扩展
+            result.put("eventMarkdown", content);  // 保留原始 markdown
+
+            // 提取 <think> 标签内容
+            String thinkContent = "";
+            Pattern thinkPattern = Pattern.compile("<think>(.*?)</think>", Pattern.DOTALL);
+            Matcher matcher = thinkPattern.matcher(content);
+            if (matcher.find()) {
+                thinkContent = matcher.group(1).trim();
+                content = content.replace(matcher.group(0), "").trim(); // 移除 <think> 部分
+            }
+            result.put("think", thinkContent);
+
+            // 粗略解析 Markdown 内容
+            String[] lines = content.split("\\n");
+            String title = "";
+            StringBuilder descBuilder = new StringBuilder();
+            List<String> options = new ArrayList<>();
+
+            for (String line : lines) {
+                if (line.startsWith("#")) {
+                    title = line.replaceAll("^#+", "").trim(); // #、## 都可以
+                } else if (line.startsWith("- ")) {
+                    options.add(line.substring(2).trim());
+                } else {
+                    descBuilder.append(line).append("\n");
+                }
+            }
+
+            result.put("eventTitle", title);
+            result.put("eventDescription", descBuilder.toString().trim());
+            result.put("eventOptions", options);
+
             return result;
         } catch (Exception e) {
             throw new RuntimeException("解析 Ollama 返回失败", e);
         }
     }
+
 
     private String buildUserContent(Map<String, Object> state) {
         // 将 playerState 序列化为文本 prompt

@@ -16,6 +16,10 @@ public class WorldController {
     @Autowired
     private WorldTimeService worldTimeService;
 
+    /**
+     * 世界时间
+     * @return
+     */
     @GetMapping("/time")
     public Map<String, Object> getWorldTime() {
         long worldTime = worldTimeService.getWorldTime();
@@ -39,9 +43,20 @@ public class WorldController {
         );
     }
 
-
+    /**
+     * 世界速度调整
+     * @param multiplier
+     */
     @PostMapping("/speed")
     public void setSpeed(@RequestParam double multiplier) {
         worldTimeService.setMultiplier(multiplier);
+    }
+
+    /**
+     * 重置世界状态，包括时间等
+     */
+    @PostMapping("/reset")
+    public void resetWorld() {
+        worldTimeService.resetWorld();
     }
 }

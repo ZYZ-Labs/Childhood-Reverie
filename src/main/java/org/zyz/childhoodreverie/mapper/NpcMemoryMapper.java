@@ -34,4 +34,11 @@ public interface NpcMemoryMapper {
     """)
     void deleteMemory(@Param("npcId") String npcId,
                       @Param("memoryKey") String memoryKey);
+    /**
+     * 清表
+     */
+    @Delete("""
+        DELETE FROM npc_memory where 1=1
+    """)
+    void clear();
 }

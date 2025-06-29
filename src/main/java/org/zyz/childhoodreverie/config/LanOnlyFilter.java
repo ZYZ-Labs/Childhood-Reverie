@@ -22,7 +22,8 @@ public class LanOnlyFilter implements Filter {
 
         String uri = request.getRequestURI();
         // 如果是 /world/** 下的接口
-        if (matcher.match("/world/speed", uri)) {
+        if (matcher.match("/world/speed", uri)||
+                matcher.match("/world/reset", uri)) {
             String ip = request.getRemoteAddr();
             // 允许 127.0.0.1 和 192.168.x.x、10.x.x.x、172.16–31.x.x
             if (!(ip.equals("127.0.0.1")

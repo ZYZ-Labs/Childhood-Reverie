@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.zyz.childhoodreverie.entity.WorldStateEntity;
+import org.zyz.childhoodreverie.mapper.EventLogMapper;
+import org.zyz.childhoodreverie.mapper.NpcMemoryMapper;
+import org.zyz.childhoodreverie.mapper.PlayerMapper;
 import org.zyz.childhoodreverie.mapper.WorldStateMapper;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +20,15 @@ public class WorldTimeService {
 
     @Autowired
     private WorldStateMapper worldStateMapper;
+
+    @Autowired
+    private NpcMemoryMapper npcMemoryMapper;
+
+    @Autowired
+    private PlayerMapper playerMapper;
+
+    @Autowired
+    private EventLogMapper eventLogMapper;
 
     private static final String KEY_WORLD_TIME = "world_time";
     private static final String KEY_LAST_REAL = "last_real_time";
@@ -95,5 +107,14 @@ public class WorldTimeService {
         m.setKeyName(KEY_MULTIPLIER);
         m.setValue(String.valueOf(multiplier));
         worldStateMapper.updateById(m);
+    }
+
+    public void resetWorld() {
+        // 重置时间、倍率等状态
+        setMultiplier(1.0);
+        npcMemoryMapper.clear();
+        playerMapper.clear();
+        eventLogMapper.clear();
+        // 如果有其他状态（比如天数、天气、事件列表等）也在这里一并清空或初始化
     }
 }
