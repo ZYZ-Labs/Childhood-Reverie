@@ -8,6 +8,8 @@ import org.zyz.childhoodreverie.mapper.EventLogMapper;
 import org.zyz.childhoodreverie.mapper.NpcMemoryMapper;
 import org.zyz.childhoodreverie.mapper.PlayerMapper;
 import org.zyz.childhoodreverie.mapper.WorldStateMapper;
+import org.zyz.childhoodreverie.mapper.InventoryMapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import javax.annotation.PostConstruct;
 import java.time.Instant;
@@ -29,6 +31,9 @@ public class WorldTimeService {
 
     @Autowired
     private EventLogMapper eventLogMapper;
+
+    @Autowired
+    private InventoryMapper inventoryMapper;
 
     private static final String KEY_WORLD_TIME = "world_time";
     private static final String KEY_LAST_REAL = "last_real_time";
@@ -116,7 +121,24 @@ public class WorldTimeService {
         setMultiplier(1.0);
         npcMemoryMapper.clear();
         playerMapper.clear();
+        inventoryMapper.clear();
         eventLogMapper.clear();
+        // 重置除世界时间外的其他 world_state 键
+        long now = Instant.now().toEpochMilli();
+
+        WorldStateEntity lastReal = new WorldStateEntity();
+        lastReal.setKeyName(KEY_LAST_REAL);
+        lastReal.setValue(String.valueOf(now));
+        worldStateMapper.updateById(lastReal);
+
+        WorldStateEntity lastEvent = new WorldStateEntity();
+        lastEvent.setKeyName(KEY_LAST_EVENT_TIME);
+        lastEvent.setValue(String.valueOf(now));
+        worldStateMapper.updateById(lastEvent);
+
+        QueryWrapper<WorldStateEntity> wrapper = new QueryWrapper<>();
+        wrapper.notIn("key_name", KEY_WORLD_TIME, KEY_LAST_REAL, KEY_MULTIPLIER, KEY_LAST_EVENT_TIME);
+        worldStateMapper.delete(wrapper);
         // 如果有其他状态（比如天数、天气、事件列表等）也在这里一并清空或初始化
     }
 }
