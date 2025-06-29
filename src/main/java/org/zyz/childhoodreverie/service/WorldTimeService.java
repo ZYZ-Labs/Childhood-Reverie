@@ -33,11 +33,13 @@ public class WorldTimeService {
     private static final String KEY_WORLD_TIME = "world_time";
     private static final String KEY_LAST_REAL = "last_real_time";
     private static final String KEY_MULTIPLIER = "time_multiplier";
+    private static final String KEY_LAST_EVENT_TIME = "last_event_time";
 
     @PostConstruct
     public void init() {
         initKey(KEY_WORLD_TIME, String.valueOf(Instant.now().toEpochMilli()));
         initKey(KEY_LAST_REAL, String.valueOf(Instant.now().toEpochMilli()));
+        initKey(KEY_LAST_EVENT_TIME, String.valueOf(Instant.now().toEpochMilli()));
         initKey(KEY_MULTIPLIER, "1.0");
     }
 
