@@ -65,7 +65,11 @@ public class StorageService {
     }
 
     public void saveWorldState(WorldStateEntity state) {
-        worldStateMapper.insert(state);
+        if (worldStateMapper.selectById(state.getKeyName()) != null) {
+            worldStateMapper.updateById(state);
+        } else {
+            worldStateMapper.insert(state);
+        }
     }
 
     // 事件记录
