@@ -23,9 +23,9 @@ public class InventoryEntity {
     private String playerId;
 
     /**
-     * 物品名称
+     * 物品 ID
      */
-    private String itemName;
+    private String itemId;
 
     /**
      * 数量

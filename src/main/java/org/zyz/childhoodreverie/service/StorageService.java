@@ -22,6 +22,10 @@ public class StorageService {
     @Autowired
     private InventoryMapper inventoryMapper;
     @Autowired
+    private NpcMapper npcMapper;
+    @Autowired
+    private ItemMapper itemMapper;
+    @Autowired
     private WorldStateMapper worldStateMapper;
     @Autowired
     private EventLogMapper eventLogMapper;
@@ -42,6 +46,24 @@ public class StorageService {
 
     public PlayerEntity getPlayer(String playerId) {
         return playerMapper.selectById(playerId);
+    }
+
+    // NPC basic info
+    public void saveNpc(NpcEntity npc) {
+        npcMapper.insert(npc);
+    }
+
+    public NpcEntity getNpc(String npcId) {
+        return npcMapper.selectById(npcId);
+    }
+
+    // Item definitions
+    public void saveItem(ItemEntity item) {
+        itemMapper.insert(item);
+    }
+
+    public ItemEntity getItem(String itemId) {
+        return itemMapper.selectById(itemId);
     }
 
     // 背包操作
