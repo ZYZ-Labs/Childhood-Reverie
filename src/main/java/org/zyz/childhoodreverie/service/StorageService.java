@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zyz.childhoodreverie.entity.*;
 import org.zyz.childhoodreverie.mapper.*;
+import org.zyz.childhoodreverie.exception.EmptyInventoryException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,6 +53,9 @@ public class StorageService {
     }
 
     public void saveInventory(List<InventoryEntity> items) {
+        if (items == null || items.isEmpty()) {
+            throw new EmptyInventoryException("inventory items cannot be empty");
+        }
         inventoryMapper.delete(
                 new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<InventoryEntity>()
                         .eq("player_id", items.get(0).getPlayerId())
