@@ -8,6 +8,7 @@ import org.zyz.childhoodreverie.entity.EventLogEntity;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * 事件触发 Controller
@@ -15,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/agent")
 public class AgentController {
-
+    private Logger logger = Logger.getLogger(AgentController.class.getSimpleName());
     private final OllamaAgentService ollamaAgentService;
     private final StorageService storageService;
 
@@ -27,6 +28,7 @@ public class AgentController {
 
     @PostMapping("/event")
     public Map<String, Object> triggerEvent(@RequestBody Map<String, Object> request) {
+        logger.info(request.toString());
         // 调用 AI 生成事件
         Map<String, Object> aiResult = ollamaAgentService.generateEvent(request);
 

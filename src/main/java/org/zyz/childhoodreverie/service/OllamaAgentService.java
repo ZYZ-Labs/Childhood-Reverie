@@ -33,6 +33,7 @@ public class OllamaAgentService {
 
     /**
      * 调用 Ollama 生成事件
+     *
      * @param playerState 传入玩家状态等上下文
      * @return 包含标题、描述和选项的 Map
      */
@@ -45,7 +46,7 @@ public class OllamaAgentService {
         messages.add(Map.of("role", "user", "content", buildUserContent(playerState)));
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put("model", "deepseek-r1:14b");
+        payload.put("model", playerState.get("model"));
         payload.put("messages", messages);
         payload.put("stream", false);
 
