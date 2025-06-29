@@ -39,6 +39,8 @@ public class WorldTimeService {
     private static final String KEY_LAST_REAL = "last_real_time";
     private static final String KEY_MULTIPLIER = "time_multiplier";
     private static final String KEY_LAST_EVENT_TIME = "last_event_time";
+    private static final String KEY_WORLD_DAY = "world_day";
+    private static final String KEY_WEATHER = "weather";
 
     @PostConstruct
     public void init() {
@@ -46,6 +48,8 @@ public class WorldTimeService {
         initKey(KEY_LAST_REAL, String.valueOf(Instant.now().toEpochMilli()));
         initKey(KEY_LAST_EVENT_TIME, String.valueOf(Instant.now().toEpochMilli()));
         initKey(KEY_MULTIPLIER, "1.0");
+        initKey(KEY_WORLD_DAY, "0");
+        initKey(KEY_WEATHER, "clear");
     }
 
     private void initKey(String key, String defaultValue) {
@@ -65,6 +69,7 @@ public class WorldTimeService {
         WorldStateEntity timeEntity = worldStateMapper.selectById(KEY_WORLD_TIME);
         WorldStateEntity realEntity = worldStateMapper.selectById(KEY_LAST_REAL);
         WorldStateEntity mulEntity = worldStateMapper.selectById(KEY_MULTIPLIER);
+        WorldStateEntity dayEntity = worldStateMapper.selectById(KEY_WORLD_DAY);
 
         long lastReal = Long.parseLong(realEntity.getValue());
         long nowReal = Instant.now().toEpochMilli();
@@ -77,6 +82,11 @@ public class WorldTimeService {
 
         timeEntity.setValue(String.valueOf(worldTime));
         realEntity.setValue(String.valueOf(nowReal));
+        if (dayEntity != null) {
+            long worldDay = worldTime / (24 * 60 * 60 * 1000);
+            dayEntity.setValue(String.valueOf(worldDay));
+            worldStateMapper.updateById(dayEntity);
+        }
 
         worldStateMapper.updateById(timeEntity);
         worldStateMapper.updateById(realEntity);
@@ -116,6 +126,38 @@ public class WorldTimeService {
         worldStateMapper.updateById(m);
     }
 
+    public String getWeather() {
+        WorldStateEntity e = worldStateMapper.selectById(KEY_WEATHER);
+        return e == null ? null : e.getValue();
+    }
+
+    public void setWeather(String weather) {
+        WorldStateEntity e = new WorldStateEntity();
+        e.setKeyName(KEY_WEATHER);
+        e.setValue(weather);
+        if (worldStateMapper.selectById(KEY_WEATHER) == null) {
+            worldStateMapper.insert(e);
+        } else {
+            worldStateMapper.updateById(e);
+        }
+    }
+
+    public long getWorldDay() {
+        WorldStateEntity e = worldStateMapper.selectById(KEY_WORLD_DAY);
+        return e == null ? 0L : Long.parseLong(e.getValue());
+    }
+
+    public void setWorldDay(long day) {
+        WorldStateEntity e = new WorldStateEntity();
+        e.setKeyName(KEY_WORLD_DAY);
+        e.setValue(String.valueOf(day));
+        if (worldStateMapper.selectById(KEY_WORLD_DAY) == null) {
+            worldStateMapper.insert(e);
+        } else {
+            worldStateMapper.updateById(e);
+        }
+    }
+
     public void resetWorld() {
         // 重置时间、倍率等状态
         setMultiplier(1.0);
@@ -139,6 +181,8 @@ public class WorldTimeService {
         QueryWrapper<WorldStateEntity> wrapper = new QueryWrapper<>();
         wrapper.notIn("key_name", KEY_WORLD_TIME, KEY_LAST_REAL, KEY_MULTIPLIER, KEY_LAST_EVENT_TIME);
         worldStateMapper.delete(wrapper);
-        // 如果有其他状态（比如天数、天气、事件列表等）也在这里一并清空或初始化
+        // 初始化其他状态
+        setWorldDay(0);
+        setWeather("clear");
     }
 }
