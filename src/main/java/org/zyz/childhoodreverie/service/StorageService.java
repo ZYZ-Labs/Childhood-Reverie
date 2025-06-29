@@ -32,6 +32,9 @@ public class StorageService {
     @Autowired
     private NpcMemoryMapper npcMemoryMapper;
 
+    private static final String KEY_WEATHER = "weather";
+    private static final String KEY_WORLD_DAY = "world_day";
+
     // 玩家操作
     public void savePlayer(PlayerEntity player) {
         playerMapper.insert(player);
@@ -96,6 +99,30 @@ public class StorageService {
         } else {
             worldStateMapper.insert(state);
         }
+    }
+
+    public String getWeather() {
+        WorldStateEntity e = getWorldState(KEY_WEATHER);
+        return e == null ? null : e.getValue();
+    }
+
+    public void setWeather(String weather) {
+        WorldStateEntity e = new WorldStateEntity();
+        e.setKeyName(KEY_WEATHER);
+        e.setValue(weather);
+        saveWorldState(e);
+    }
+
+    public long getWorldDay() {
+        WorldStateEntity e = getWorldState(KEY_WORLD_DAY);
+        return e == null ? 0L : Long.parseLong(e.getValue());
+    }
+
+    public void setWorldDay(long day) {
+        WorldStateEntity e = new WorldStateEntity();
+        e.setKeyName(KEY_WORLD_DAY);
+        e.setValue(String.valueOf(day));
+        saveWorldState(e);
     }
 
     // 事件记录
